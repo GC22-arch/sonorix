@@ -1,0 +1,14 @@
+{
+  "name": "Sonorix",
+  "short_name": "Sonorix",
+  "description": "Dictado por voz conectado a tu PC",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#06070d",
+  "theme_color": "#06070d",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

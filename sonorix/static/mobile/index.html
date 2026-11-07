@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0b0c10">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Sonorix</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@800&display=swap" rel="stylesheet">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon.svg">
+<link rel="apple-touch-icon" href="/icon.svg">
+<style>
+:root{--bg:#06070d;--panel:#0e1020;--line:#23284a;--text:#ededf4;--muted:#8a8d9b;--a:#7C4DFF;--b:#00E5FF;--m:#FF2BD6;--bad:#ff4d5e;--good:#3ddc97;color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{margin:0;background:radial-gradient(500px 360px at 20% 0,#00E5FF1c,transparent),radial-gradient(500px 360px at 90% 10%,#FF2BD61c,transparent),var(--bg);color:var(--text);font:16px/1.45 -apple-system,"Segoe UI",Roboto,sans-serif;
+  display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 16px);user-select:none;-webkit-user-select:none}
+header{display:flex;align-items:center;gap:10px}
+header img{width:30px;height:30px}
+header b{font:800 17px Orbitron,-apple-system,sans-serif;letter-spacing:3px;background:linear-gradient(120deg,#00E5FF,#7C4DFF 55%,#FF2BD6);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sp{flex:1}
+.chip{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:4px 10px}
+main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;min-height:0}
+canvas{width:100%;max-width:420px;height:90px}
+.rec{position:relative;width:168px;height:168px;border-radius:50%;border:0;background:linear-gradient(135deg,var(--b),var(--a) 55%,var(--m));box-shadow:0 0 0 2px #00E5FF33,0 18px 60px #7C4DFF66;display:grid;place-items:center;cursor:pointer;transition:transform .15s}
+.rec:active{transform:scale(.96)}
+.rec svg{width:64px;height:64px;fill:#fff}
+.rec.on{background:var(--bad);box-shadow:0 0 0 0 #ff4d5e88;animation:pulse 1.4s infinite}
+.rec.busy{background:#2b2e3b;box-shadow:none}
+.rec.busy svg{animation:spin 1s linear infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 #ff4d5e88}70%{box-shadow:0 0 0 26px #ff4d5e00}100%{box-shadow:0 0 0 0 #ff4d5e00}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hint{color:var(--muted);font-size:14px;text-align:center;min-height:20px}
+.timer{font-variant-numeric:tabular-nums;font-size:15px;color:var(--muted);min-height:22px}
+.out{width:100%;max-width:520px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;display:none}
+.out .t{white-space:pre-wrap;word-break:break-word;user-select:text;-webkit-user-select:text;max-height:28vh;overflow:auto}
+.row{display:flex;gap:8px;margin-top:12px}
+.btn{flex:1;background:#1c1e29;border:1px solid var(--line);color:var(--text);border-radius:12px;padding:11px;font:inherit;font-size:15px}
+.btn.p{background:linear-gradient(120deg,var(--b),var(--a) 55%,var(--m));border:0;font-weight:600}
+.meta{color:var(--muted);font-size:12px;margin-top:8px}
+.opts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.opt{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:99px;padding:8px 14px;font-size:14px}
+.opt input{accent-color:var(--m);width:18px;height:18px}
+.err{color:var(--bad)}
+details{width:100%;max-width:520px}
+summary{color:var(--muted);font-size:14px;text-align:center;list-style:none;padding:8px}
+.h{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:8px;font-size:14px}
+.credit{text-align:center;padding-top:10px;font:600 11px Orbitron,-apple-system,sans-serif;letter-spacing:3px;color:#8a8d9bb0}
+.credit b{background:linear-gradient(120deg,#00E5FF,#7C4DFF 55%,#FF2BD6);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
+.h small{display:block;color:var(--muted);margin-top:4px}
+</style>
+</head>
+<body>
+<header><img src="/icon.svg" alt=""><b>SONORIX</b><span class="sp"></span><span class="chip" id="conn">Conectado al PC</span></header>
+<main>
+  <canvas id="wave"></canvas>
+  <button class="rec" id="rec" aria-label="Grabar">
+    <svg viewBox="0 0 24 24" id="ico"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.08A7 7 0 0 0 19 12h-2Z"/></svg>
+  </button>
+  <div class="timer" id="timer"></div>
+  <div class="hint" id="hint">Toca para dictar · mantén pulsado para hablar y soltar</div>
+  <div class="out" id="out">
+    <div class="t" id="text"></div>
+    <div class="row"><button class="btn p" id="copy">Copiar</button><button class="btn" id="share">Compartir</button></div>
+    <div class="meta" id="meta"></div>
+  </div>
+  <div class="opts">
+    <label class="opt"><input type="checkbox" id="pastePc"> Pegar en el PC</label>
+    <label class="opt"><input type="checkbox" id="ai"> Limpieza IA</label>
+  </div>
+  <details id="hist"><summary>Historial reciente</summary><div id="hlist"></div></details>
+</main>
+<footer class="credit">by <b>GC</b></footer>
+<script>
+const $=s=>document.querySelector(s);
+const MIC='<path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.08A7 7 0 0 0 19 12h-2Z"/>';
+const STOP='<rect x="6" y="6" width="12" height="12" rx="2.5"/>';
+const SPIN='<path d="M12 2a10 10 0 1 0 10 10h-2.5A7.5 7.5 0 1 1 12 4.5V2Z"/>';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const btn=$('#rec'), ico=$('#ico');
+let stream, rec, chunks=[], t0=0, tick, ctx, analyser, raf, pressT=0, state='idle', lastText='';
+
+if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(()=>{});
+
+function setState(s){ state=s; btn.className='rec'+(s==='rec'?' on':s==='busy'?' busy':''); ico.innerHTML = s==='rec'?STOP:s==='busy'?SPIN:MIC; }
+function pickMime(){ for(const m of ['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg;codecs=opus']) if(window.MediaRecorder && MediaRecorder.isTypeSupported(m)) return m; return ''; }
+
+async function start(){
+  if(state!=='idle') return;
+  try{
+    stream = stream && stream.active ? stream : await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+  }catch(e){ $('#hint').innerHTML='<span class="err">Permite el micrófono para usar Sonorix</span>'; return; }
+  const mime=pickMime(); chunks=[];
+  rec = new MediaRecorder(stream, mime?{mimeType:mime, audioBitsPerSecond:32000}:{});
+  rec.ondataavailable=e=>{ if(e.data.size) chunks.push(e.data); };
+  rec.onstop=send;
+  rec.start(250); t0=performance.now(); setState('rec');
+  if(navigator.vibrate) navigator.vibrate(15);
+  $('#hint').textContent='Escuchando… toca para terminar';
+  tick=setInterval(()=>{ const s=Math.floor((performance.now()-t0)/1000); $('#timer').textContent=`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; },250);
+  viz();
+}
+function stop(){ if(state!=='rec') return; clearInterval(tick); cancelAnimationFrame(raf); setState('busy'); $('#hint').textContent='Transcribiendo…'; if(navigator.vibrate) navigator.vibrate(10); rec.stop(); }
+
+async function send(){
+  const dur=(performance.now()-t0)/1000; $('#timer').textContent='';
+  stream.getTracks().forEach(t=>t.stop()); stream=null; clearWave();
+  if(dur<0.4){ setState('idle'); $('#hint').textContent='Muy corto, intenta de nuevo'; return; }
+  const blob=new Blob(chunks,{type:rec.mimeType||'audio/webm'});
+  const fd=new FormData(); fd.append('audio', blob, 'audio'); fd.append('duration', dur.toFixed(2));
+  try{
+    const r=await fetch('/api/transcribe',{method:'POST',body:fd,credentials:'same-origin'});
+    if(r.status===401){ location.reload(); return; }
+    const j=await r.json(); if(j.error) throw new Error(j.error);
+    if(!j.text){ $('#hint').textContent='No se escuchó voz'; return; }
+    show(j);
+  }catch(e){ $('#hint').innerHTML='<span class="err">'+esc(e.message||'Sin conexión con el PC')+'</span>'; $('#conn').textContent='Sin conexión'; }
+  finally{ setState('idle'); }
+}
+async function show(j){
+  lastText=j.text; $('#out').style.display='block'; $('#text').textContent=j.text;
+  $('#meta').textContent=`${j.words} palabras · ${(j.latency_ms/1000).toFixed(1)} s${j.cleaned?' · IA':''}${j.pasted_pc?' · pegado en el PC':''}`;
+  $('#conn').textContent='Conectado al PC';
+  let copied=false; try{ await navigator.clipboard.writeText(j.text); copied=true; }catch(e){}
+  $('#hint').textContent = copied ? '✓ Copiado al portapapeles' : 'Listo · toca Copiar';
+  if(navigator.vibrate) navigator.vibrate([10,40,10]);
+  if($('#hist').open) loadHist();
+}
+
+// visualizador
+function viz(){
+  try{ ctx = ctx || new (window.AudioContext||window.webkitAudioContext)(); ctx.resume();
+    const src=ctx.createMediaStreamSource(stream); analyser=ctx.createAnalyser(); analyser.fftSize=1024; src.connect(analyser);
+  }catch(e){ return; }
+  const c=$('#wave'), g=c.getContext('2d'), buf=new Uint8Array(analyser.fftSize), hist=new Array(48).fill(0);
+  const dpr=devicePixelRatio||1; c.width=c.clientWidth*dpr; c.height=c.clientHeight*dpr;
+  const grad=g.createLinearGradient(0,0,c.width,0); grad.addColorStop(0,'#00E5FF'); grad.addColorStop(.55,'#7C4DFF'); grad.addColorStop(1,'#FF2BD6');
+  (function draw(){
+    analyser.getByteTimeDomainData(buf); let s=0; for(const v of buf){ const x=(v-128)/128; s+=x*x; }
+    const rms=Math.sqrt(s/buf.length), db=20*Math.log10(rms+1e-6); hist.push(Math.max(0,Math.min(1,(db+52)/40))); hist.shift();
+    g.clearRect(0,0,c.width,c.height); g.fillStyle=grad; const bw=c.width/hist.length;
+    hist.forEach((v,i)=>{ const shape=.55+.45*Math.sin(Math.PI*i/(hist.length-1)); const h=Math.max(3*dpr, v*c.height*shape); g.beginPath(); g.roundRect(i*bw+bw*.2, (c.height-h)/2, bw*.6, h, 3*dpr); g.fill(); });
+    raf=requestAnimationFrame(draw);
+  })();
+}
+function clearWave(){ const c=$('#wave'); c.getContext('2d').clearRect(0,0,c.width,c.height); }
+
+// toque = alternar · mantener = push-to-talk
+btn.addEventListener('pointerdown', e=>{ e.preventDefault(); pressT=performance.now(); if(state==='idle') start(); else if(state==='rec') { pressT=0; stop(); } });
+btn.addEventListener('pointerup', ()=>{ if(pressT && state==='rec' && performance.now()-pressT>450) stop(); pressT=0; });
+btn.addEventListener('contextmenu', e=>e.preventDefault());
+
+$('#copy').onclick=async()=>{ try{ await navigator.clipboard.writeText(lastText); $('#hint').textContent='✓ Copiado'; }catch(e){ const r=document.createRange(); r.selectNodeContents($('#text')); getSelection().removeAllRanges(); getSelection().addRange(r); $('#hint').textContent='Texto seleccionado: copia manualmente'; } };
+$('#share').onclick=()=>{ if(navigator.share) navigator.share({text:lastText}).catch(()=>{}); else $('#copy').click(); };
+
+// preferencias
+fetch('/api/me').then(r=>r.json()).then(m=>{ $('#pastePc').checked=m.paste_pc; $('#ai').checked=m.ai_cleanup;
+  if(m.engine!=='local' && !m.has_api_key) $('#hint').innerHTML='<span class="err">Configura la API key de Groq en el panel del PC</span>'; }).catch(()=>{ $('#conn').textContent='Sin conexión'; });
+const pref=(k,v)=>fetch('/api/prefs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({[k]:v})});
+$('#pastePc').onchange=e=>pref('mobile_paste_pc',e.target.checked);
+$('#ai').onchange=e=>pref('ai_cleanup',e.target.checked);
+
+// historial
+async function loadHist(){ const r=await fetch('/api/history').then(r=>r.json());
+  $('#hlist').innerHTML=r.items.map(i=>`<div class="h" data-t="${esc(i.text)}">${esc(i.text)}<small>${new Date(i.created_at).toLocaleString('es',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})} · ${i.mode==='celular'?'📱':'💻'} · toca para copiar</small></div>`).join('')||'<div class="h">Sin dictados todavía</div>'; }
+$('#hist').addEventListener('toggle',()=>{ if($('#hist').open) loadHist(); });
+$('#hlist').onclick=async e=>{ const h=e.target.closest('.h'); if(h&&h.dataset.t){ try{ await navigator.clipboard.writeText(h.dataset.t); $('#hint').textContent='✓ Copiado'; }catch(_){} } };
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+numpy>=1.26
+sounddevice>=0.4.6
+soundfile>=0.12
+keyboard>=0.13.5
+pyperclip>=1.8
+requests>=2.31
+flask>=3.0
+pystray>=0.19
+pillow>=10.0
+cryptography>=42
+qrcode>=7.4

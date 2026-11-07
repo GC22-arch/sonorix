@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sonorix</title>
+<link rel="icon" href="/static/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06070d; --panel:#0e1020; --panel2:#141730; --line:#23284a; --text:#ececf3; --muted:#8a8d9b;
+  --accent:#7C4DFF; --accent2:#00E5FF; --mag:#FF2BD6; --good:#3ddc97; --bad:#ff4d5e; --warn:#ffb547;
+  --grad:linear-gradient(120deg,var(--accent2),var(--accent) 55%,var(--mag));
+  --r:14px; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(900px 380px at 85% -10%,#FF2BD614,transparent),radial-gradient(900px 420px at 0 -10%,#00E5FF14,transparent),var(--bg);min-height:100vh;color:var(--text);font:14px/1.5 "Segoe UI",system-ui,sans-serif}
+a{color:var(--accent2)}
+.wrap{max-width:1080px;margin:0 auto;padding:24px 20px 60px}
+header{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo{width:46px;height:46px;filter:drop-shadow(0 0 10px #00E5FF55)}
+h1{font:800 22px/1.1 Orbitron,"Segoe UI",sans-serif;margin:0;letter-spacing:3px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 12px #7C4DFF55)}
+h1 small{display:block;font:600 10px/1.6 Orbitron,"Segoe UI",sans-serif;letter-spacing:4px;color:var(--muted);-webkit-text-fill-color:var(--muted)}
+h1 small i{font-style:normal;color:var(--mag);-webkit-text-fill-color:var(--mag)}
+.spacer{flex:1}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:var(--panel);border:1px solid var(--line);font-size:13px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 10px var(--good)}
+.dot.paused{background:var(--muted);box-shadow:none}.dot.rec{background:var(--bad);box-shadow:0 0 10px var(--bad)}
+.dot.busy{background:var(--warn);box-shadow:0 0 10px var(--warn)}
+nav{display:flex;gap:4px;margin:22px 0 18px;border-bottom:1px solid var(--line);overflow-x:auto}
+nav button{background:none;border:0;color:var(--muted);padding:10px 14px;font:inherit;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+nav button.on{color:var(--text);border-image:var(--grad) 1}
+.tab{display:none}.tab.on{display:block}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.kpi .v{font:700 26px/1.3 Orbitron,"Segoe UI",sans-serif;letter-spacing:.5px}
+.kpi .l{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.6px}
+.kpi .s{color:var(--muted);font-size:12px}
+.hero{background:radial-gradient(1200px 200px at 0 0,#7C4DFF26,transparent),var(--panel);display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.hero kbd{background:var(--panel2);border:1px solid var(--line);border-bottom-width:3px;border-radius:7px;padding:3px 9px;font:600 13px "Segoe UI"}
+.row2{display:grid;gap:14px;grid-template-columns:2fr 1fr;margin-top:14px}
+@media(max-width:760px){.row2{grid-template-columns:1fr}}
+h3{margin:0 0 12px;font-size:14px;color:var(--muted);font-weight:600}
+.chart{display:flex;align-items:flex-end;gap:6px;height:150px}
+.chart .b{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+.chart .bar{width:100%;border-radius:6px 6px 2px 2px;background:var(--grad);min-height:2px;transition:height .4s}
+.chart .d{font-size:10px;color:var(--muted)}
+.apps .a{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line)}
+.apps .a:last-child{border:0}
+.toolbar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+input,select,textarea{background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:9px 12px;font:inherit;width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid #7C4DFF66;border-color:var(--accent)}
+textarea{min-height:80px;resize:vertical}
+.btn{background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:9px 14px;font:inherit;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:#3a3e4e}
+.btn.primary{background:var(--grad);border:0;color:#fff;font-weight:600;box-shadow:0 0 18px #7C4DFF55}
+.btn.danger{color:var(--bad)}
+.btn.sm{padding:5px 10px;font-size:12px}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:10px}
+.item .t{white-space:pre-wrap;word-break:break-word}
+.item .m{display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:8px;align-items:center}
+.item .m .act{margin-left:auto;display:flex;gap:6px}
+.tag{border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.tag.ai{border-color:#FF2BD666;color:#ff9be9}
+.empty{text-align:center;color:var(--muted);padding:50px 0}
+.form{display:grid;gap:16px;grid-template-columns:1fr 1fr}
+@media(max-width:760px){.form{grid-template-columns:1fr}}
+.field label{display:block;font-weight:600;margin-bottom:6px}
+.field .h{color:var(--muted);font-size:12px;margin-top:5px}
+.field.full{grid-column:1/-1}
+.inline{display:flex;gap:8px}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;background:var(--panel2);border:1px solid var(--line);border-radius:10px}
+.switch b{display:block;font-weight:600}.switch span{color:var(--muted);font-size:12px}
+.tg{position:relative;width:42px;height:24px;flex:none}
+.tg input{opacity:0;width:0;height:0}
+.tg i{position:absolute;inset:0;background:#2b2e3b;border-radius:99px;transition:.2s;cursor:pointer}
+.tg i:before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.tg input:checked+i{background:var(--accent)}
+.tg input:checked+i:before{transform:translateX(18px)}
+.section{grid-column:1/-1;margin-top:8px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.7px}
+.credit{text-align:center;margin-top:36px;font:600 11px Orbitron,"Segoe UI",sans-serif;letter-spacing:3px;color:#8a8d9bb0}
+.credit b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--panel2);border:1px solid var(--line);padding:10px 16px;border-radius:10px;opacity:0;transition:.25s;pointer-events:none;z-index:9}
+.toast.on{opacity:1;transform:translateX(-50%)}
+.rep{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:8px}
+.qrbox{display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.qr{width:220px;height:220px;background:#fff;border-radius:12px;padding:8px;display:grid;place-items:center;color:#000}
+.qr svg{width:100%;height:100%}
+.steps{margin:0;padding-left:18px;color:var(--muted)}.steps li{margin:6px 0}
+.banner{border:1px solid #ffb54755;background:#ffb5470f;color:#ffd79a;border-radius:var(--r);padding:12px 16px;margin-bottom:14px;display:none}
+code{background:var(--panel2);padding:1px 6px;border-radius:5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img class="logo" src="/static/icon.svg" alt="">
+    <h1>SONORIX<small>TECH <i>//</i> SOUND</small></h1>
+    <div class="spacer"></div>
+    <span class="pill"><span class="dot" id="sdot"></span><span id="stext">Conectando…</span></span>
+    <button class="btn" id="pauseBtn">Pausar</button>
+  </header>
+
+  <nav>
+    <button data-tab="home" class="on">Inicio</button>
+    <button data-tab="history">Historial</button>
+    <button data-tab="mobile">Celular</button>
+    <button data-tab="settings">Ajustes</button>
+  </nav>
+
+  <div id="keyBanner" class="banner">Falta tu API key de Groq (gratis, sin tarjeta). Créala en <a href="https://console.groq.com/keys" target="_blank" rel="noopener">console.groq.com/keys</a> y pégala en <a href="#" data-go="settings">Ajustes</a>.</div>
+
+  <div id="localNote" class="banner" style="border-color:#00E5FF44;background:#00E5FF0d;color:#bdf6ff">Funcionando gratis con el motor local (sin internet). Para más velocidad y precisión, agrega una clave gratis de Groq en <a href="#" data-go="settings">Ajustes</a>.</div>
+
+  <!-- INICIO -->
+  <section class="tab on" id="tab-home">
+    <div class="card hero">
+      <div style="flex:1;min-width:260px">
+        <div style="font-size:18px;font-weight:600;margin-bottom:4px">Habla en cualquier app.</div>
+        <div style="color:var(--muted)">Mantén <kbd id="hk1">RIGHT CTRL</kbd> mientras hablas, o tócala <b>dos veces</b> para manos libres (otro toque o <kbd>Esc</kbd> termina). El texto aparece donde está tu cursor.</div>
+      </div>
+      <div class="kpi" style="text-align:right"><div class="l">Hoy</div><div class="v" id="kToday">0</div><div class="s">palabras</div></div>
+    </div>
+    <div class="grid" style="margin-top:14px">
+      <div class="card kpi"><div class="l">Palabras</div><div class="v" id="kWords">0</div><div class="s" id="kCount">0 dictados</div></div>
+      <div class="card kpi"><div class="l">Tiempo ahorrado</div><div class="v" id="kSaved">0 min</div><div class="s">vs. teclear a 40 ppm</div></div>
+      <div class="card kpi"><div class="l">Velocidad</div><div class="v" id="kWpm">0</div><div class="s">palabras / minuto</div></div>
+      <div class="card kpi"><div class="l">Latencia media</div><div class="v" id="kLat">—</div><div class="s" id="kCost">costo estimado $0</div></div>
+      <div class="card kpi"><div class="l">Racha</div><div class="v" id="kStreak">0</div><div class="s">días seguidos</div></div>
+    </div>
+    <div class="row2">
+      <div class="card"><h3>Palabras · últimos 14 días</h3><div class="chart" id="chart"></div></div>
+      <div class="card apps"><h3>Dónde más dictas</h3><div id="apps"><div class="empty" style="padding:20px 0">Aún no hay datos</div></div></div>
+    </div>
+  </section>
+
+  <!-- HISTORIAL -->
+  <section class="tab" id="tab-history">
+    <div class="toolbar">
+      <input id="q" placeholder="Buscar en tus dictados…" style="flex:1;min-width:200px">
+      <a class="btn" href="/api/export.csv">Exportar CSV</a>
+      <button class="btn danger" id="clearBtn">Borrar todo</button>
+    </div>
+    <div id="list"></div>
+    <div style="text-align:center"><button class="btn" id="moreBtn" style="display:none">Cargar más</button></div>
+  </section>
+
+  <!-- CELULAR -->
+  <section class="tab" id="tab-mobile">
+    <div class="card">
+      <div class="switch" style="margin-bottom:16px">
+        <div><b>Modo celular</b><span>Sirve Sonorix por tu wifi para dictar desde el celular. Solo dispositivos emparejados con el QR pueden usarlo.</span></div>
+        <label class="tg"><input type="checkbox" id="mobileOn"><i></i></label>
+      </div>
+      <div id="mobileBody" style="display:none">
+        <div class="qrbox">
+          <div class="qr" id="qr">…</div>
+          <div style="flex:1;min-width:260px">
+            <ol class="steps">
+              <li>Conecta el celular a <b>la misma red wifi</b> que este PC.</li>
+              <li>Escanea el QR con la cámara.</li>
+              <li>El navegador avisará de un certificado no verificado (es el de tu PC): toca <b>Avanzado → Continuar</b>. Solo pasa una vez.</li>
+              <li>Opcional: <b>Agregar a pantalla de inicio</b> para usarla como app.</li>
+            </ol>
+            <p style="color:var(--muted);font-size:12px">Dirección: <code id="murl">—</code></p>
+            <div class="switch" style="margin:12px 0">
+              <div><b>Pegar también en el PC</b><span>Lo que dictes en el celular se escribe donde esté el cursor del PC (teclado remoto).</span></div>
+              <label class="tg"><input type="checkbox" data-k="mobile_paste_pc"><i></i></label>
+            </div>
+            <button class="btn sm danger" id="regenBtn">Desemparejar todos los celulares</button>
+            <p id="merr" style="color:var(--bad)"></p>
+            <p style="color:var(--muted);font-size:12px">Si el celular no conecta, permite Python en el Firewall de Windows (redes privadas).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AJUSTES -->
+  <section class="tab" id="tab-settings">
+    <div class="card"><div class="form">
+      <div class="section" style="margin-top:0;padding-top:0;border:0">Motor de transcripción</div>
+      <div class="field full">
+        <label>API key de Groq</label>
+        <div class="inline">
+          <input id="apiKey" type="password" placeholder="gsk_…" autocomplete="off">
+          <button class="btn" id="testKey">Probar</button>
+          <button class="btn primary" id="saveKey">Guardar</button>
+        </div>
+        <div class="h" id="keyHint">100% gratis, sin tarjeta, en <a href="https://console.groq.com/keys" target="_blank" rel="noopener">console.groq.com</a>. Se guarda solo en este PC.</div>
+      </div>
+      <div class="field"><label>Motor</label>
+        <select data-k="engine"><option value="auto">Automático · Groq gratis + local de respaldo</option><option value="groq">Solo Groq (nube, ~0,3 s)</option><option value="local">Solo local · faster-whisper (offline)</option></select>
+        <div class="h" id="localHint"></div></div>
+      <div class="field"><label>Modelo Groq</label>
+        <select data-k="groq_model"><option value="whisper-large-v3-turbo">whisper-large-v3-turbo · rápido · $0,04/h</option><option value="whisper-large-v3">whisper-large-v3 · máxima precisión · $0,111/h</option></select></div>
+      <div class="field"><label>Idioma</label>
+        <select data-k="language"><option value="">Autodetectar</option><option value="es">Español</option><option value="en">Inglés</option><option value="pt">Portugués</option><option value="fr">Francés</option><option value="it">Italiano</option><option value="de">Alemán</option></select>
+        <div class="h">Fijar el idioma mejora la precisión y la velocidad.</div></div>
+      <div class="field"><label>Modelo local</label>
+        <select data-k="local_model"><option>tiny</option><option>base</option><option>small</option><option>medium</option><option>large-v3</option></select></div>
+
+      <div class="section">Atajo</div>
+      <div class="field"><label>Tecla</label>
+        <div class="inline"><input data-k="hotkey" readonly><button class="btn" id="capBtn">Cambiar…</button></div>
+        <div class="h">Recomendado: <code>right ctrl</code>, <code>right alt</code>, <code>f8</code>… Una tecla sola.</div></div>
+      <div class="field"><label>Micrófono</label><select data-k="mic_device" id="mic"></select></div>
+      <div class="field"><label>Ventana de doble toque (s)</label><input data-k="double_tap_window" type="number" step="0.05" min="0.2" max="0.8"></div>
+      <div class="field"><label>Duración mínima (s)</label><input data-k="min_duration" type="number" step="0.05" min="0.1" max="2"></div>
+
+      <div class="section">Inteligencia</div>
+      <div class="field full switch"><div><b>Limpieza con IA</b><span>Quita muletillas (“eh”, “o sea”), arregla puntuación, aplica tus autocorrecciones y arma listas. Usa un LLM de Groq.</span></div><label class="tg"><input type="checkbox" data-k="ai_cleanup"><i></i></label></div>
+      <div class="field"><label>Estilo</label><select data-k="cleanup_style"><option value="natural">Natural</option><option value="formal">Formal</option><option value="casual">Casual</option></select></div>
+      <div class="field"><label>Modelo de limpieza</label><input data-k="cleanup_model"></div>
+      <div class="field full switch"><div><b>Comandos de voz</b><span>“nueva línea”, “nuevo párrafo”, “punto y aparte”, “dos puntos”, “abre/cierra interrogación”…</span></div><label class="tg"><input type="checkbox" data-k="voice_commands"><i></i></label></div>
+      <div class="field full"><label>Vocabulario propio</label><textarea data-k="vocabulary" placeholder="Nombres, marcas y términos que uses: Sonorix, Orbita, Supabase, Next.js…"></textarea><div class="h">Whisper los escribirá bien.</div></div>
+      <div class="field full"><label>Reemplazos</label><div id="reps"></div><button class="btn sm" id="addRep">+ Agregar reemplazo</button><div class="h">Lo que dices → lo que se escribe. Ej.: “mi correo” → tu@email.com</div></div>
+
+      <div class="section">Salida</div>
+      <div class="field"><label>Método</label><select data-k="paste_method"><option value="clipboard">Pegar (Ctrl+V) · instantáneo</option><option value="type">Escribir tecla a tecla · compatible</option></select></div>
+      <div class="field"><label>Posición de la píldora</label><select data-k="overlay_position"><option value="bottom">Abajo</option><option value="top">Arriba</option></select><div class="h">Se aplica al reiniciar.</div></div>
+      <div class="field switch"><div><b>Restaurar portapapeles</b><span>Devuelve lo que tenías copiado</span></div><label class="tg"><input type="checkbox" data-k="restore_clipboard"><i></i></label></div>
+      <div class="field switch"><div><b>Espacio al final</b><span>Para encadenar dictados</span></div><label class="tg"><input type="checkbox" data-k="trailing_space"><i></i></label></div>
+      <div class="field switch"><div><b>Sonidos</b><span>Pitidos al iniciar/terminar manos libres</span></div><label class="tg"><input type="checkbox" data-k="sounds"><i></i></label></div>
+      <div class="field switch"><div><b>Iniciar con Windows</b><span>Arranca en segundo plano</span></div><label class="tg"><input type="checkbox" data-k="startup"><i></i></label></div>
+    </div></div>
+  </section>
+  <footer class="credit">by <b>GC</b></footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const H = {'Content-Type':'application/json','X-Sonorix':'1'};
+const api = (u, o={}) => fetch(u, {...o, headers:{...H, ...(o.headers||{})}}).then(r => { if(!r.ok) throw new Error(r.status); return r.json(); });
+const post = (u, b={}) => api(u, {method:'POST', body:JSON.stringify(b)});
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = n => Number(n||0).toLocaleString('es');
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('on'),2200); }
+
+// tabs
+function go(name){ $$('nav button').forEach(b=>b.classList.toggle('on', b.dataset.tab===name)); $$('.tab').forEach(t=>t.classList.toggle('on', t.id==='tab-'+name));
+  if(name==='history') loadHistory(true); if(name==='home') loadStats(); if(name==='mobile') loadMobile(); try{localStorage.setItem('sx-tab',name)}catch(e){} }
+$$('nav button').forEach(b=>b.onclick=()=>go(b.dataset.tab));
+document.addEventListener('click', e=>{ const g=e.target.closest('[data-go]'); if(g){ e.preventDefault(); go(g.dataset.go);} });
+
+// status
+let S = {};
+async function loadStatus(){
+  try{ S = await api('/api/status'); }catch(e){ $('#stext').textContent='Sonorix no responde'; $('#sdot').className='dot paused'; return; }
+  const d=$('#sdot'); d.className='dot'+(S.paused?' paused':S.recording?' rec':S.busy?' busy':'');
+  $('#stext').textContent = S.paused?'En pausa':S.recording?'Grabando…':S.busy?'Transcribiendo…':'Escuchando el atajo';
+  $('#pauseBtn').textContent = S.paused?'Reanudar':'Pausar';
+  $('#keyBanner').style.display = (!S.has_api_key && S.engine!=='local' && !S.local_available) ? 'block':'none';
+  $('#localNote').style.display = (!S.has_api_key && S.local_available && S.engine!=='groq') ? 'block':'none';
+  $('#hk1').textContent = (S.hotkey||'').toUpperCase();
+}
+$('#pauseBtn').onclick = async()=>{ await post('/api/pause',{paused:!S.paused}); loadStatus(); };
+
+// stats
+async function loadStats(){
+  const s = await api('/api/stats');
+  $('#kToday').textContent=fmt(s.today_words); $('#kWords').textContent=fmt(s.words); $('#kCount').textContent=fmt(s.count)+' dictados';
+  const m=Math.round(s.saved_seconds/60); $('#kSaved').textContent = m>=90? (m/60).toFixed(1)+' h' : m+' min';
+  $('#kWpm').textContent=fmt(s.wpm); $('#kLat').textContent = s.avg_latency_ms? (s.avg_latency_ms/1000).toFixed(2)+' s':'—';
+  $('#kCost').textContent='$0 en capa gratis · pagando serían $'+s.est_cost_usd.toFixed(3); $('#kStreak').textContent=s.streak;
+  const max=Math.max(1,...s.daily.map(d=>d.words));
+  $('#chart').innerHTML = s.daily.map(d=>{ const dt=new Date(d.day+'T12:00'); return `<div class="b" title="${fmt(d.words)} palabras · ${d.count} dictados"><div class="bar" style="height:${Math.max(1.5,d.words/max*100)}%"></div><div class="d">${dt.toLocaleDateString('es',{weekday:'narrow'})}${dt.getDate()}</div></div>`}).join('');
+  $('#apps').innerHTML = s.apps.length ? s.apps.map(a=>`<div class="a"><span>${esc(a.app)}</span><span style="color:var(--muted)">${fmt(a.words)} palabras</span></div>`).join('') : '<div class="empty" style="padding:20px 0">Aún no hay datos</div>';
+}
+
+// history
+let off=0, qTimer;
+async function loadHistory(reset){
+  if(reset) off=0;
+  const q=$('#q').value.trim();
+  const r = await api(`/api/history?q=${encodeURIComponent(q)}&limit=40&offset=${off}`);
+  const html = r.items.map(it=>{ const d=new Date(it.created_at);
+    return `<div class="item" data-id="${it.id}"><div class="t">${esc(it.text)}</div><div class="m">
+      <span>${d.toLocaleDateString('es',{day:'numeric',month:'short'})} ${d.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'})}</span>
+      <span>${it.words} palabras · ${(+it.duration).toFixed(1)} s</span>
+      ${it.app?`<span class="tag">${esc(it.app.split(' · ')[0])}</span>`:''}
+      ${it.cleaned?'<span class="tag ai">IA</span>':''}
+      ${it.mode==='celular'?'<span class="tag">📱</span>':''}
+      <span class="act"><button class="btn sm" data-copy>Copiar</button>${it.raw_text && it.raw_text!==it.text?'<button class="btn sm" data-raw>Original</button>':''}<button class="btn sm danger" data-del>Borrar</button></span>
+    </div></div>`}).join('');
+  if(reset) $('#list').innerHTML = html || `<div class="empty">${q?'Sin resultados':'Tus dictados aparecerán aquí'}</div>`;
+  else $('#list').insertAdjacentHTML('beforeend', html);
+  off += r.items.length; $('#moreBtn').style.display = off < r.total ? 'inline-block':'none';
+  window._items = Object.assign(window._items||{}, Object.fromEntries(r.items.map(i=>[i.id,i])));
+}
+$('#q').oninput = ()=>{ clearTimeout(qTimer); qTimer=setTimeout(()=>loadHistory(true),220); };
+$('#moreBtn').onclick = ()=>loadHistory(false);
+$('#list').onclick = async e=>{
+  const card=e.target.closest('.item'); if(!card) return; const id=+card.dataset.id, it=window._items[id];
+  if(e.target.matches('[data-copy]')){ await navigator.clipboard.writeText(it.text); toast('Copiado'); }
+  if(e.target.matches('[data-raw]')){ const t=card.querySelector('.t'); const raw=t.dataset.raw!=='1'; t.textContent= raw?it.raw_text:it.text; t.dataset.raw=raw?'1':''; e.target.textContent=raw?'Final':'Original'; }
+  if(e.target.matches('[data-del]')){ await api('/api/history/'+id,{method:'DELETE'}); card.remove(); toast('Borrado'); }
+};
+$('#clearBtn').onclick = async()=>{ if(!confirm('¿Borrar todo el historial? No se puede deshacer.')) return; await api('/api/history?confirm=1',{method:'DELETE'}); loadHistory(true); toast('Historial borrado'); };
+
+// settings
+let C = {};
+function fill(){
+  $$('[data-k]').forEach(el=>{ const k=el.dataset.k, v=C[k]; if(el.type==='checkbox') el.checked=!!v; else el.value = v ?? ''; });
+  $('#keyHint').innerHTML = C.has_api_key ? `✓ Clave guardada <code>${esc(C.api_key_hint)}</code>${C.api_key_from_env?' (desde GROQ_API_KEY)':''} · <a href="#" id="clrKey">quitar</a>` : '100% gratis, sin tarjeta, en <a href="https://console.groq.com/keys" target="_blank" rel="noopener">console.groq.com</a>. Se guarda solo en este PC.';
+  const ck=$('#clrKey'); if(ck) ck.onclick=async e=>{ e.preventDefault(); C=await post('/api/settings/clear-key'); fill(); loadStatus(); };
+  $('#localHint').innerHTML = C.local_available ? '✓ Motor local instalado: respaldo offline activo' : 'Respaldo offline: ejecuta <code>instalar-local.bat</code> (gratis, ~1 GB)';
+  renderReps(); $('#mobileOn').checked = !!C.mobile_enabled;
+}
+async function loadSettings(){
+  C = await api('/api/settings');
+  const devs = await api('/api/devices').catch(()=>[]);
+  $('#mic').innerHTML = '<option value="">Predeterminado del sistema</option>' + devs.map(d=>`<option value="${d.index}">${esc(d.name)} (${d.api.replace('Windows ','')})</option>`).join('');
+  fill();
+}
+async function save(patch){ C = await post('/api/settings', patch); fill(); loadStatus(); toast('Guardado'); }
+$$('[data-k]').forEach(el=>{ if(el.dataset.k==='hotkey') return;
+  el.addEventListener('change', ()=>{ const k=el.dataset.k; let v = el.type==='checkbox'?el.checked : el.type==='number'?parseFloat(el.value) : el.value;
+    if(k==='mic_device') v = el.value===''?null:+el.value; save({[k]:v}); }); });
+$('#saveKey').onclick = async()=>{ const k=$('#apiKey').value.trim(); if(!k) return toast('Pega tu clave primero'); await save({groq_api_key:k}); $('#apiKey').value=''; };
+$('#testKey').onclick = async()=>{ $('#testKey').textContent='…'; const r=await post('/api/test-key',{key:$('#apiKey').value.trim()}); $('#testKey').textContent='Probar'; toast((r.ok?'✓ ':'✗ ')+r.message); };
+$('#capBtn').onclick = async()=>{ const b=$('#capBtn'); b.textContent='Pulsa una tecla…'; b.disabled=true;
+  try{ const r=await post('/api/hotkey/capture'); if(r.key){ await save({hotkey:r.key}); toast('Atajo: '+r.key.toUpperCase()); } else toast('No se detectó ninguna tecla'); } finally { b.textContent='Cambiar…'; b.disabled=false; } };
+
+// reemplazos
+function renderReps(){ const reps=Object.entries(C.replacements||{});
+  $('#reps').innerHTML = reps.map(([a,b],i)=>`<div class="rep"><input value="${esc(a)}" data-ra="${i}" placeholder="Dices…"><input value="${esc(b)}" data-rb="${i}" placeholder="Se escribe…"><button class="btn sm danger" data-rx="${i}">✕</button></div>`).join(''); }
+function collectReps(){ const out={}; $$('#reps .rep').forEach(r=>{ const a=r.children[0].value.trim(), b=r.children[1].value; if(a) out[a]=b; }); return out; }
+$('#reps').addEventListener('change', ()=>save({replacements:collectReps()}));
+$('#reps').addEventListener('click', e=>{ if(e.target.dataset.rx!==undefined){ e.target.parentElement.remove(); save({replacements:collectReps()}); } });
+$('#addRep').onclick = ()=>{ $('#reps').insertAdjacentHTML('beforeend','<div class="rep"><input placeholder="Dices…"><input placeholder="Se escribe…"><button class="btn sm danger" data-rx="n">✕</button></div>'); $('#reps .rep:last-child input').focus(); };
+
+// celular
+async function loadMobile(){
+  const m = await api('/api/mobile');
+  $('#mobileOn').checked = m.enabled; $('#mobileBody').style.display = m.enabled?'block':'none';
+  $('#merr').textContent = m.error ? 'Error: '+m.error : '';
+  if(m.running){ $('#murl').textContent = `https://${m.ips[0]}:${m.port}`;
+    const svg = await fetch('/api/mobile/qr.svg?'+Date.now()).then(r=>r.ok?r.text():''); $('#qr').innerHTML = svg || 'Sin red';
+  } else { $('#qr').textContent = m.enabled?'Iniciando…':''; if(m.enabled && !m.error) setTimeout(loadMobile, 1200); }
+}
+$('#mobileOn').onchange = async e=>{ await save({mobile_enabled:e.target.checked}); setTimeout(loadMobile, 400); };
+$('#regenBtn').onclick = async()=>{ if(!confirm('Los celulares emparejados dejarán de funcionar hasta escanear el nuevo QR.')) return; await post('/api/mobile/regenerate'); loadMobile(); toast('Nuevo QR generado'); };
+
+// arranque
+(async()=>{ await loadStatus(); await loadSettings(); let t='home'; try{ t=localStorage.getItem('sx-tab')||'home'; }catch(e){} go(t); })();
+setInterval(loadStatus, 1500);
+setInterval(()=>{ if($('#tab-home').classList.contains('on')) loadStats(); }, 6000);
+</script>
+</body>
+</html>
